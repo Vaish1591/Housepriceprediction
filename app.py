@@ -1,39 +1,27 @@
-import flask
-from flask import request
-app = flask.Flask(__name__)
-app.config["DEBUG"] = True
+import numpy as np
+from flask import Flask, request, jsonify, render_template
+import pickle
 
-from flask_cors import CORS
-CORS(app)
+app = Flask(__name__)
+model = pickle.load(open('model.pkl', 'rb'))
 
+@app.route('/')
+def home():
+    return render_template('hp.html')
 
-#@app.route('/',methods=['GET'])
-#def default():
- #   return ''' <h1> Helloo.  Data scientist.....How are you </h1>'''
+@app.route('/submit',methods=['POST'])
+def submit():
+    '''
+    For rendering results on HTML GUI
+    '''
+    int_features = [int(x) for x in request.form.values()]
+    final_features = [np.array(int_features)]
+    prediction = model.predict(final_features)
 
+    output = round(prediction[0], 2)
 
-@app.route('/corona',methods=['GET'])
-def corona():
-    return ''' <h1> Corona curve is decreasing trend now.. </h1>'''
-
-@app.route('/search',methods=['GET'])
-def search():
-    return ''' <h1> Searching...  '''+ request.args['s']+ '''</h1>'''
-
-
-
-@app.route('/',methods=['GET'])
-def predict():
-    import joblib
-    model = joblib.load('hp_trained_model.pkl')
-    price = model.predict([[int(request.args['sqft']),
-                            int(request.args['place']),
-                            int(request.args['yo']),
-                            int(request.args['tf']),
-                            int(request.args['bhk']),
-                           ]])
-    return str(round(price[0]))
+    return render_template('hp.html', prediction_text='Price should be Rs. {}'.format(output))
 
 
-if __name__ == '__main__':
-    app.run()
+if __name__ == "__main__":
+    app.run(debug=True)
