@@ -35,4 +35,5 @@ def predict():
     return str(round(price[0]))
 
 
-app.run()
+if __name__ == '__main__':
+    app.run()
