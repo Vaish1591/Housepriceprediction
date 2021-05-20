@@ -7,9 +7,9 @@ from flask_cors import CORS
 CORS(app)
 
 
-@app.route('/',methods=['GET'])
-def default():
-    return ''' <h1> Helloo.  Data scientist.....How are you </h1>'''
+#@app.route('/',methods=['GET'])
+#def default():
+ #   return ''' <h1> Helloo.  Data scientist.....How are you </h1>'''
 
 
 @app.route('/corona',methods=['GET'])
@@ -22,7 +22,7 @@ def search():
 
 
 
-@app.route('/predict',methods=['GET'])
+@app.route('/',methods=['GET'])
 def predict():
     import joblib
     model = joblib.load('hp_trained_model.pkl')
